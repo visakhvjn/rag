@@ -2,6 +2,7 @@ import express from 'express';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
+import { checkESConnection, createIndexIfNotExists, saveDocumentToES } from './elastic-search.js';
 
 const PORT = process.env.PORT || 3000;
 const app = express();
@@ -55,6 +56,8 @@ app.post('/upload', upload.array('files', MAX_FILE_COUNT), (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
+  await checkESConnection();
+  await createIndexIfNotExists();
   console.log(`Server listening on ${PORT}`);
 });
